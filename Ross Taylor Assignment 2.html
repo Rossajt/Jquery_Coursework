@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- AJAX Script link -->
+<script src='http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js'></script>
+<title>AJAX Assignment</title>
+<style>
+body{
+background-color: #CCFFFF;
+font-family: Arial, Georgia, "Times New Roman", Times, serif;
+color: #000000;
+}
+table td, table th{
+font-size: 1.1em;
+text-align: left;
+padding-top: 5px;
+padding-bottom: 4px;
+background-color: skyblue;
+color: #ffffff;
+}
+</style>
+</head>
+<body>
+<h1>Food Hygiene for restaurants in London</h1>
+<p>Below is a table that shows the food hygiene standards for restaurants in London.
+<p>You can use the search box at the bottom to search for a specific business!
+
+<!-- Space to put the pagination in. -->
+<ul class='pagination'></ul>
+
+<!-- initialize's the table with the id of table and sets out the first row. -->
+<table id = table>
+	<tr>
+		<td>Business</td>
+		<td>Address</td>
+		<td>Rating</td>
+		<td>Date</td>
+	</tr>
+</table>
+<br>
+
+<!-- Sets out the form where the user can search. -->
+<form id = searchTable>
+	Search:<br>
+	<input type = 'text' , id = 'searchBox'>
+	<input type = 'button' , value = Search , onclick = "search();">
+</form>
+<br>
+<script>
+$(function initializeTable(){
+	<!-- Searches the JSON file and returns the first 40 results. -->
+	$.ajax({
+		type: 'get',
+		dataType:'json',
+		url: 'http://www.cs.kent.ac.uk/people/staff/lb514/hygiene/hygiene.php?op=retrieve&page=1',
+		success: function(data){
+			<!-- Loops through each row of the table assigning values in each row. -->
+			$(data).each(function(id, value){
+				$('#table tr:last').after('<tr><td>' + value.business + '</td><td>' + value.address + '</td><td>' + value.rating + '</td><td>' + value.date + '</td></tr>')
+			});
+		}
+	});
+});
+$(function pagination(){
+	<!-- Searches the JSON file and returns the number of pages the file has. -->
+	$.ajax({
+		type:'get',
+		dataType:'json',
+		url:'http://www.cs.kent.ac.uk/people/staff/lb514/hygiene/hygiene.php?op=pages',
+		success: function(data){
+			<!-- Logs the number into the console. -->
+			console.log(data)
+		}
+	});
+});
+$(function search(){
+	<!-- Takes the value from searchBox and puts it into the URL of the AJAX call. -->
+	var searchBox = '#searchBox';
+	$.ajax({
+		type: 'get',
+		dataType:'json',
+		url: 'http://www.cs.kent.ac.uk/people/staff/lb514/hygiene/hygiene.php?op=searchname&name' + '#searchBox',
+		success: function(data){
+			<!-- Returns all values with the associated string from searchBox -->
+			$(data).each(function(id, value){
+				$('#table tr:last').after('<tr><td>' + value.business + '</td><td>' + value.address + '</td><td>' + value.rating + '</td><td>' + value.date + '</td></tr>')
+			});
+		}
+	});
+});
+</script>
+</body>
+</html>
